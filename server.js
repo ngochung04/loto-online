@@ -2,7 +2,7 @@
 
 // server/index.js
 import { Server } from "socket.io";
-import  http from "http";
+import http from "http";
 import cors from "cors";
 import express from "express";
 
@@ -19,7 +19,7 @@ const calledNumbers = [];
 const allNumbers = Array.from({ length: 90 }, (_, i) => i + 1); // Example 1-90
 
 io.on("connection", (socket) => {
-  console.log("A user connected:", socket.id);
+  console.log("A user connected:", io.engine.clientsCount, socket.id);
 
   socket.on("host:call_number", () => {
     const remaining = allNumbers.filter((n) => !calledNumbers.includes(n));
@@ -47,6 +47,18 @@ io.on("connection", (socket) => {
   socket.on("host:restart_game", () => {
     calledNumbers.length = 0;
     io.emit("server:restart_game");
+  });
+
+  socket.on("request_login", (_) => {
+    io.emit("request_login", _);
+  });
+
+  socket.on("request_ticket", (_) => {
+    io.emit("request_ticket", _);
+  });
+
+  socket.on("request_bingo", (_) => {
+    io.emit("request_bingo", _);
   });
 });
 

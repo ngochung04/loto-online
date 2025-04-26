@@ -1,5 +1,6 @@
 import React from "react";
 import { useUserInfo } from "../stores/userStore";
+import { socket } from "../services/socket";
 
 const LoginPage = () => {
   const { setName } = useUserInfo();
@@ -9,6 +10,7 @@ const LoginPage = () => {
     if (username.trim()) {
       setName(username.trim());
     }
+    socket.emit("request_login", username.trim());
   };
   return (
     <div

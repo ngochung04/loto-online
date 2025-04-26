@@ -1,10 +1,17 @@
 import { TICKETS } from "../constance";
 import Ticket from "../components/Ticket";
 import Header from "../components/Header";
-import { useUserInfo } from "../stores/userStore";
+import { useUserData, useUserInfo } from "../stores/userStore";
+import { useEffect } from "react";
+import { socket } from "../services/socket";
 
 const TicketListPage = () => {
   const { setTicketId } = useUserInfo();
+  const { setSelection } = useUserData();
+
+  useEffect(() => {
+    setSelection([]);
+  }, []);
 
   return (
     <>
@@ -39,6 +46,7 @@ const TicketListPage = () => {
               style={{ cursor: "pointer", transition: "transform 0.15s" }}
               onClick={() => {
                 setTicketId(Number(id) as keyof typeof TICKETS);
+                socket.emit("request_ticket", +id);
               }}
             >
               <Ticket

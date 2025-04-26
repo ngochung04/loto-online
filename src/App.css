@@ -50,6 +50,8 @@
   gap: 16px;
   border: 2px solid black;
   padding: 16px;
+  background-color: white;
+  z-index: 10;
 }
 
 .ticket_block {
@@ -87,4 +89,70 @@
 .ticket_row__number.checked {
   text-decoration: underline;
   text-decoration-color: red;
+}
+
+.container {
+  z-index: 10;
+  background: rgba(37, 37, 37, 0.8);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.history-number {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: #2d3a4a;
+  min-width: 30px;
+  height: 100%;
+  background: #f6fcd8;
+  border-radius: 8px;
+  padding: 0 8px;
+}
+
+.history-number:first-of-type {
+  color: rgb(0, 255, 13);
+  background: #293825;
+  font-size: 40px;
+  min-width: 45px;
+  height: 45px;
+}
+
+.btn-bingo {
+  background-color: #343a40;
+  border-radius: 16px;
+  color: #fff;
+  cursor: pointer;
+  padding: 8px 16px;
+  width: 200px;
+  height: 100px;
+  font-size: 48px;
+  font-weight: bold;
+}
+.btn-bingo:hover {
+  background-image: linear-gradient(
+    to right,
+    #e7484f,
+    #e7484f 16.65%,
+    #f68b1d 16.65%,
+    #f68b1d 33.3%,
+    #fced00 33.3%,
+    #fced00 49.95%,
+    #009e4f 49.95%,
+    #009e4f 66.6%,
+    #00aac3 66.6%,
+    #00aac3 83.25%,
+    #732982 83.25%,
+    #732982 100%,
+    #e7484f 100%
+  );
+  animation: slidebg 2s linear infinite;
+}
+
+@keyframes slidebg {
+  to {
+    background-position: 20vw;
+  }
 }

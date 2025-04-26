@@ -195,3 +195,7 @@ export const TICKETS = {
     [6, 18, 32, 69, 70],
   ],
 };
+
+export const SOCKET_EVENT = {
+  BINGO: "bingo",
+};

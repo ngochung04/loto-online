@@ -1,3 +1,4 @@
+import { socket } from "../services/socket";
 import { useUserInfo } from "../stores/userStore";
 
 const Header = () => {
@@ -15,7 +16,7 @@ const Header = () => {
         letterSpacing: 1,
         textAlign: "center",
         boxShadow: "0 2px 12px rgba(37,99,235,0.08)",
-        marginBottom: 32,
+        marginBottom: 16,
         borderBottomLeftRadius: 16,
         borderBottomRightRadius: 16,
       }}
@@ -30,6 +31,7 @@ const Header = () => {
           textDecoration: "underline",
         }}
         onClick={() => {
+          socket.disconnect();
           logout();
         }}
       >

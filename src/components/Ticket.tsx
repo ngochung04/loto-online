@@ -23,6 +23,7 @@ const Ticket = ({
   const renderRow = (data: number[]) => {
     return Array.from({ length: 9 }, (_, i) => {
       const value = data.find((_) => {
+        if (i === 8 && _ === 90) return true;
         if (_ < i * 10 + 10 && _ >= i * 10) return true;
         return false;
       });
