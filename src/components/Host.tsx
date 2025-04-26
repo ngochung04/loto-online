@@ -8,6 +8,11 @@ interface User {
   name: string;
   tickerNumber: number;
   isRequestBingo: boolean;
+  numberToCheck: number[];
+  checkResult: number[];
+  onCheckBingo: () => void;
+  onAcceptBingo: () => void;
+  onRejectBingo: () => void;
 }
 
 export const Host = () => {
@@ -20,13 +25,11 @@ export const Host = () => {
       key: `number-${index + 1}`,
     }))
   );
-  const [bingo, setBingo] = useState<boolean>(false);
-  const [isShowResultMessage, setIsShowResultMessage] =
-    useState<boolean>(false);
-  const [numberToCheck, setNumberToCheck] = useState<number[]>([]);
   const [newNumber, setNewNumber] = useState<number>(0);
   const [historyNumbers, setHistoryNumbers] = useState<number[]>([]);
   const [users, setUsers] = useState<User[]>([]);
+  const [isSuccessAcceptAllBingo, setIsSuccessAcceptAllBingo] =
+    useState<boolean>(false);
 
   const handleNewNumber = () => {
     const available = numbers.filter((n) => !n.isChoose);
@@ -46,29 +49,177 @@ export const Host = () => {
     setHistoryNumbers([...historyNumbers, selected]);
   };
 
-  const checkBingoFromClient = (numbers: number[]) => {
-    setNumberToCheck(numbers);
-    const bingo = numbers.filter((number) => isChoose(number));
-    if (bingo.length === 5) {
-      setBingo(true);
+  const checkBingoFromClient = (id: string) => {
+    const user = users.find((user) => user.id === id);
+    const numbers = user?.numberToCheck;
+    if (!user || !numbers) return;
+
+    let bingoNumbers = numbers.filter((number) => isChoose(number));
+    if (bingoNumbers.length === 0) {
+      bingoNumbers = [-1, -1, -1, -1, -1];
     }
-    setIsShowResultMessage(true);
+    setUsers((users) =>
+      users.map((user) =>
+        user.id === id ? { ...user, checkResult: bingoNumbers } : user
+      )
+    );
+    console.log("bingoNumbers", bingoNumbers);
+    return bingoNumbers;
+  };
+
+  const checkAllBingoFromClient = () => {
+    const bingoUsers = users.filter((user) => user.isRequestBingo);
+    console.log("bingoUsers", bingoUsers);
+
+    let isAllBingo = false;
+    bingoUsers.forEach((user) => {
+      const bingo = checkBingoFromClient(user.id);
+      if (bingo?.length === 5 && bingo.every((number) => number !== -1)) {
+        isAllBingo = true;
+      }
+    });
+    setIsSuccessAcceptAllBingo(isAllBingo);
+
+    return isAllBingo;
+  };
+
+  const acceptAllBingoFromClient = () => {
+    setUsers(
+      users.map((user) =>
+        user.isRequestBingo ? { ...user, isRequestBingo: false } : user
+      )
+    );
+  };
+
+  const rejectAllBingoFromClient = () => {
+    setUsers(
+      users.map((user) =>
+        user.isRequestBingo ? { ...user, isRequestBingo: false } : user
+      )
+    );
+  };
+
+  const acceptBingoFromClient = (id: string) => {
+    setUsers(
+      users.map((user) =>
+        user.id === id ? { ...user, isRequestBingo: false } : user
+      )
+    );
+  };
+
+  const rejectBingoFromClient = (id: string) => {
+    setUsers(
+      users.map((user) =>
+        user.id === id ? { ...user, isRequestBingo: false } : user
+      )
+    );
   };
 
   const isChoose = (number: number) => {
     return numbers.some((item) => item.number === number && item.isChoose);
   };
 
+  const countBingoUsers = () => {
+    return users.filter((user) => user.isRequestBingo).length;
+  };
+
+  const countCheckBingoUsers = () => {
+    return (
+      users.filter((user) => user.checkResult.length > 0).length ===
+      users.filter((user) => user.isRequestBingo).length
+    );
+  };
+
   useEffect(() => {
     setUsers([
-      { id: "1", name: "Yan Pham", tickerNumber: 1, isRequestBingo: false },
-      { id: "2", name: "Ngan NTT", tickerNumber: 5, isRequestBingo: true },
-      { id: "3", name: "Ngoc Hung", tickerNumber: 3, isRequestBingo: false },
-      { id: "4", name: "Chi Chu", tickerNumber: 15, isRequestBingo: false },
-      { id: "5", name: "Huyen Nguyen", tickerNumber: 6, isRequestBingo: false },
-      { id: "6", name: "Phuong Linh", tickerNumber: 7, isRequestBingo: false },
-      { id: "7", name: "Nam Nho", tickerNumber: 10, isRequestBingo: false },
-      { id: "8", name: "Anh Duy", tickerNumber: 11, isRequestBingo: false },
+      {
+        id: "1",
+        name: "Yan Pham",
+        tickerNumber: 1,
+        isRequestBingo: false,
+        numberToCheck: [13, 84, 6, 15, 43],
+        checkResult: [],
+        onCheckBingo: () => {},
+        onAcceptBingo: () => {},
+        onRejectBingo: () => {},
+      },
+      {
+        id: "2",
+        name: "Ngan NTT",
+        tickerNumber: 5,
+        isRequestBingo: true,
+        numberToCheck: [13, 84, 6, 15, 43],
+        checkResult: [],
+        onCheckBingo: () => {},
+        onAcceptBingo: () => {},
+        onRejectBingo: () => {},
+      },
+      {
+        id: "3",
+        name: "Ngoc Hung",
+        tickerNumber: 3,
+        isRequestBingo: false,
+        numberToCheck: [13, 84, 6, 15, 43],
+        checkResult: [],
+        onCheckBingo: () => {},
+        onAcceptBingo: () => {},
+        onRejectBingo: () => {},
+      },
+      {
+        id: "4",
+        name: "Chi Chu",
+        tickerNumber: 15,
+        isRequestBingo: true,
+        numberToCheck: [13, 84, 6, 15, 43],
+        checkResult: [],
+        onCheckBingo: () => {},
+        onAcceptBingo: () => {},
+        onRejectBingo: () => {},
+      },
+      {
+        id: "5",
+        name: "Huyen Nguyen",
+        tickerNumber: 6,
+        isRequestBingo: false,
+        numberToCheck: [13, 84, 6, 15, 43],
+        checkResult: [],
+        onCheckBingo: () => {},
+        onAcceptBingo: () => {},
+        onRejectBingo: () => {},
+      },
+      {
+        id: "6",
+        name: "Phuong Linh",
+        tickerNumber: 7,
+        isRequestBingo: false,
+        numberToCheck: [13, 84, 6, 15, 43],
+        checkResult: [],
+        onCheckBingo: () => {},
+        onAcceptBingo: () => {},
+        onRejectBingo: () => {},
+      },
+      {
+        id: "7",
+        name: "Nam Nho",
+        tickerNumber: 10,
+        isRequestBingo: false,
+        numberToCheck: [13, 84, 6, 15, 43],
+        checkResult: [],
+        onCheckBingo: () => {},
+        onAcceptBingo: () => {},
+        onRejectBingo: () => {},
+      },
+      {
+        id: "8",
+        name: "Anh Duy",
+        tickerNumber: 11,
+        isRequestBingo: false,
+        numberToCheck: [13, 84, 6, 15, 43],
+        checkResult: [],
+        onCheckBingo: () => {},
+        onAcceptBingo: () => {},
+        onRejectBingo: () => {},
+      },
     ]);
   }, []);
 
@@ -79,39 +230,15 @@ export const Host = () => {
         <div className="left-container">
           <div className="host-actions">
             <div className="buttons">
-              <button onClick={handleNewNumber}>Số mới</button>
-              <button onClick={() => checkBingoFromClient([13, 84, 6, 15, 43])}>
-                Kiểm tra
+              <div className="numbers-count">
+                {`Đã kêu ${numbers.filter((n) => n.isChoose).length} / ${
+                  numbers.length
+                } số`}
+              </div>
+              <button onClick={handleNewNumber} className="button-new-number">
+                Số mới
               </button>
             </div>
-            {/* snack message */}
-            {isShowResultMessage && (
-              <div className="host-result-message">
-                <div className="number-to-check">
-                  {numberToCheck.map((number) => (
-                    <div
-                      key={number}
-                      className={clsx(
-                        "number-item",
-                        isChoose(number)
-                          ? "number-item--valid"
-                          : "number-item--invalid"
-                      )}
-                    >
-                      {number}
-                    </div>
-                  ))}
-                </div>
-                <div
-                  className={clsx(
-                    "result-message",
-                    bingo && "result-message--success"
-                  )}
-                >
-                  {bingo ? "Hợp lệ" : "Chưa hợp lệ"}
-                </div>
-              </div>
-            )}
           </div>
           <div className="numbers">
             <div className="history-numbers">
@@ -139,7 +266,36 @@ export const Host = () => {
               ))}
             </div>
             <div className="users-container">
-              <h3>Users ( {users.length} )</h3>
+              <div className="users-header">
+                <h3>Users ( {users.length} )</h3>
+                {countBingoUsers() > 1 && (
+                  <button
+                    className="bingo-action-button bingo-action-button--check"
+                    onClick={checkAllBingoFromClient}
+                    disabled={countCheckBingoUsers()}
+                  >
+                    Kiểm tra đồng loạt
+                  </button>
+                )}
+                {countBingoUsers() > 1 && countCheckBingoUsers() && (
+                  <button
+                    className="bingo-action-button bingo-action-button--accept"
+                    disabled={!isSuccessAcceptAllBingo}
+                    onClick={acceptAllBingoFromClient}
+                  >
+                    Chấp nhận đồng loạt
+                  </button>
+                )}
+                {countBingoUsers() > 1 && countCheckBingoUsers() && (
+                  <button
+                    className="bingo-action-button bingo-action-button--reject"
+                    disabled={isSuccessAcceptAllBingo}
+                    onClick={rejectAllBingoFromClient}
+                  >
+                    Từ chối đồng loạt
+                  </button>
+                )}
+              </div>
               <div className="users-list">
                 {users.map((user) => (
                   <User
@@ -147,6 +303,11 @@ export const Host = () => {
                     name={user.name}
                     tickerNumber={user.tickerNumber}
                     isRequestBingo={user.isRequestBingo}
+                    numberToCheck={user.numberToCheck}
+                    checkResult={user.checkResult}
+                    onCheckBingo={() => checkBingoFromClient(user.id)}
+                    onAcceptBingo={() => acceptBingoFromClient(user.id)}
+                    onRejectBingo={() => rejectBingoFromClient(user.id)}
                   />
                 ))}
               </div>

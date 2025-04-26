@@ -77,6 +77,8 @@ button:focus-visible {
   gap: 10px;
   width: 100%;
   height: 100%;
+  padding: 20px;
+  padding-top: 0;
 }
 
 .number-item {
@@ -87,6 +89,13 @@ button:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.number-item--small {
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+  background-color: #fcfcfc;
 }
 
 .number-item--new-number {
@@ -147,16 +156,27 @@ button:focus-visible {
   display: flex;
   gap: 10px;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: end;
+  justify-content: end;
+}
+
+.button-new-number {
+  background-color: #646cff;
+  color: #fff;
+  cursor: pointer;
 }
 
 .buttons {
   display: flex;
   flex-direction: row;
-  gap: 10px;
+  gap: 20px;
   align-items: center;
-  justify-content: center;
+  justify-content: start;
+}
+
+.numbers-count {
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .host-result-message {
@@ -198,13 +218,23 @@ button:focus-visible {
   border-radius: 10px;
   padding: 2px 4px 12px 4px;
   background-color: #f9f9f9;
-  width: 400px;
+  width: 500px;
 }
+
+.users-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #646cff;
+}
+
 
 .users-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+
   height: 100%;
   overflow-y: scroll;
 }
@@ -213,11 +243,14 @@ button:focus-visible {
   display: flex;
   flex-direction: row;
   gap: 20px;
-  align-items: start;
+  align-items: center;
   justify-content: start;
-  width: 100%;
   border-bottom: 1px solid #646cff;
-  padding-bottom: 10px;
+  padding: 10px 0 10px 4px;
+}
+
+.user-item--bingo {
+  background-color: #646cff38;
 }
 
 .user-item:last-child {
@@ -229,6 +262,12 @@ button:focus-visible {
   display: flex;
   flex-direction: column;
   align-items: start;
+  gap: 4px;
+}
+
+.bingo-numbers {
+  display: flex;
+  flex-direction: row;
   gap: 2px;
 }
 
@@ -236,6 +275,54 @@ button:focus-visible {
   font-size: 16px;
   font-weight: 600;
 }
+
+.bingo-action {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.bingo-action-button {
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 5px;
+  margin-top: 4px;
+  cursor: pointer;
+}
+
+.bingo-action-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #929292;
+}
+
+
+.bingo-action-button--check {
+  background-color: #2563eb;
+  color: #fff;
+}
+
+.bingo-action-button--accept {
+  background-color: #00882d;
+  color: #fff;
+}
+
+.bingo-action-button--reject {
+  background-color: #cb000f;
+  color: #fff;
+}
+
+
+
+
+
+
 
 .bingo-label {
   font-size: 12px;
