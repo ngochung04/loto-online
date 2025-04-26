@@ -1,17 +1,32 @@
 import "./App.css";
-import { useState } from "react";
+import Header from "./components/Header";
 import Ticket from "./components/Ticket";
+import LoginPage from "./pages/Login";
+import TicketListPage from "./pages/TicketList";
+import { useUserInfo } from "./stores/userStore";
 
 function App() {
-  const [selected, setSelected] = useState<number | null>(null);
+  const { name, ticketId } = useUserInfo();
+
+  if (!name) return <LoginPage />;
+  if (!ticketId) return <TicketListPage />;
+
   return (
-    <div className="loto-container">
-      <div className="tickets-list">
-        <Ticket ticketId={5} />
+    <div
+      className="loto-container"
+      style={{
+        minHeight: "100vh",
+        background: "linear-gradient(135deg, #f8fafc 0%, #dbeafe 100%)",
+        padding: 0,
+      }}
+    >
+      <Header />
+      <div
+        className="tickets-list"
+        style={{ display: "flex", justifyContent: "center" }}
+      >
+        <Ticket ticketId={ticketId} />
       </div>
-      {selected && (
-        <div className="selected-info">Bạn đã chọn vé số {selected}</div>
-      )}
     </div>
   );
 }

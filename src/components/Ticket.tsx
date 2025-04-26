@@ -1,18 +1,24 @@
-import { useState } from "react";
 import { TICKETS, TICKET_COLORS } from "../constance";
+import { useUserData } from "../stores/userStore";
 
-const Ticket = ({ ticketId }: { ticketId: keyof typeof TICKETS }) => {
-  const [checkedList, setCheckedList] = useState<number[]>([]);
+const Ticket = ({
+  ticketId,
+  size = "default",
+}: {
+  ticketId: keyof typeof TICKETS;
+  size?: "default" | "small";
+}) => {
+  const { selection, setSelection } = useUserData();
+  const isPreview = size === "small";
 
   const handleClick = (number: number) => {
-    setCheckedList((prev) => {
-      if (prev.includes(number)) return prev.filter((_) => _ !== number);
-
-      return [...prev, number];
-    });
+    if (isPreview) return;
+    if (selection.includes(number)) {
+      setSelection(selection.filter((_) => _ !== number));
+      return;
+    }
+    setSelection([...selection, number]);
   };
-
-  console.log(checkedList);
 
   const renderRow = (data: number[]) => {
     return Array.from({ length: 9 }, (_, i) => {
@@ -26,9 +32,10 @@ const Ticket = ({ ticketId }: { ticketId: keyof typeof TICKETS }) => {
           <div
             key={i}
             className={`ticket_row__number ${
-              checkedList.includes(value) ? "checked" : ""
+              selection.includes(value) ? "checked" : ""
             }`}
             onClick={() => handleClick(value)}
+            style={{ cursor: "pointer" }}
           >
             {value}
           </div>
@@ -38,14 +45,16 @@ const Ticket = ({ ticketId }: { ticketId: keyof typeof TICKETS }) => {
         <div
           key={i}
           className="ticket_row__number"
-          style={{ backgroundColor: TICKET_COLORS[ticketId] }}
+          style={{
+            backgroundColor: TICKET_COLORS[ticketId],
+          }}
         ></div>
       );
     });
   };
 
   return (
-    <div className="ticket_container">
+    <div className={`ticket_container ${isPreview ? "preview" : ""}`}>
       <div className="ticket_block">
         <div className="ticket_row">{renderRow(TICKETS[ticketId][0])} </div>
         <div className="ticket_row">{renderRow(TICKETS[ticketId][1])} </div>
