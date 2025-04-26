@@ -7,11 +7,14 @@ const LoginPage = () => {
   const [username, setUsername] = React.useState("");
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("asd");
+
+    socket.emit("request_login", username.trim());
     if (username.trim()) {
       setName(username.trim());
     }
-    socket.emit("request_login", username.trim());
   };
+
   return (
     <div
       style={{

@@ -50,15 +50,35 @@ io.on("connection", (socket) => {
   });
 
   socket.on("request_login", (_) => {
-    io.emit("request_login", _);
+    io.emit("request_login", {
+      name: "SYSTEM",
+      ticketId: 0,
+      message: _ + " join this room.",
+    });
+  });
+
+  socket.on("request_logout", (_) => {
+    io.emit("request_logout", {
+      name: "SYSTEM",
+      ticketId: 0,
+      message: _ + " out this room.",
+    });
   });
 
   socket.on("request_ticket", (_) => {
-    io.emit("request_ticket", _);
+    io.emit("request_ticket", {
+      name: "SYSTEM",
+      ticketId: 0,
+      message: _.name + " choose ticket number " + _.ticketId + ".",
+    });
   });
 
   socket.on("request_bingo", (_) => {
-    io.emit("request_bingo", _);
+    io.emit("request_bingo", {
+      name: "SYSTEM",
+      ticketId: 0,
+      message: _.name + " request Bingo!!!",
+    });
   });
 });
 

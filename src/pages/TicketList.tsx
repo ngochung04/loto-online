@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { socket } from "../services/socket";
 
 const TicketListPage = () => {
-  const { setTicketId } = useUserInfo();
+  const { name, setTicketId } = useUserInfo();
   const { setSelection } = useUserData();
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const TicketListPage = () => {
               style={{ cursor: "pointer", transition: "transform 0.15s" }}
               onClick={() => {
                 setTicketId(Number(id) as keyof typeof TICKETS);
-                socket.emit("request_ticket", +id);
+                socket.emit("request_ticket", { name, ticketId: +id });
               }}
             >
               <Ticket

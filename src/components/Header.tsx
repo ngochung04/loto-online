@@ -31,6 +31,7 @@ const Header = () => {
           textDecoration: "underline",
         }}
         onClick={() => {
+          socket.emit("request_logout", name);
           socket.disconnect();
           logout();
         }}
