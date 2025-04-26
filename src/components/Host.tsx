@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { User } from "./User";
+import Header from "./Header";
 
 interface User {
   id: string;
@@ -72,86 +73,88 @@ export const Host = () => {
   }, []);
 
   return (
-    <div className="host-container">
-      <div className="left-container">
-        <h2>Host</h2>
-        <div className="host-actions">
-          <div className="buttons">
-            <button onClick={handleNewNumber}>Số mới</button>
-            <button onClick={() => checkBingoFromClient([13, 84, 6, 15, 43])}>
-              Kiểm tra
-            </button>
+    <>
+      <Header />
+      <div className="host-container">
+        <div className="left-container">
+          <div className="host-actions">
+            <div className="buttons">
+              <button onClick={handleNewNumber}>Số mới</button>
+              <button onClick={() => checkBingoFromClient([13, 84, 6, 15, 43])}>
+                Kiểm tra
+              </button>
+            </div>
+            {/* snack message */}
+            {isShowResultMessage && (
+              <div className="host-result-message">
+                <div className="number-to-check">
+                  {numberToCheck.map((number) => (
+                    <div
+                      key={number}
+                      className={clsx(
+                        "number-item",
+                        isChoose(number)
+                          ? "number-item--valid"
+                          : "number-item--invalid"
+                      )}
+                    >
+                      {number}
+                    </div>
+                  ))}
+                </div>
+                <div
+                  className={clsx(
+                    "result-message",
+                    bingo && "result-message--success"
+                  )}
+                >
+                  {bingo ? "Hợp lệ" : "Chưa hợp lệ"}
+                </div>
+              </div>
+            )}
           </div>
-          {/* snack message */}
-          {isShowResultMessage && (
-            <div className="host-result-message">
-              <div className="number-to-check">
-                {numberToCheck.map((number) => (
-                  <div
-                    key={number}
-                    className={clsx(
-                      "number-item",
-                      isChoose(number)
-                        ? "number-item--valid"
-                        : "number-item--invalid"
-                    )}
-                  >
+          <div className="numbers">
+            <div className="history-numbers">
+              <h3>Lịch sử</h3>
+              <div className="history-numbers-list">
+                {historyNumbers.map((number) => (
+                  <div key={number} className="history-number">
                     {number}
                   </div>
                 ))}
               </div>
-              <div
-                className={clsx(
-                  "result-message",
-                  bingo && "result-message--success"
-                )}
-              >
-                {bingo ? "Hợp lệ" : "Chưa hợp lệ"}
-              </div>
             </div>
-          )}
-        </div>
-        <div className="numbers">
-          <div className="history-numbers">
-            <h3>Lịch sử</h3>
-            <div className="history-numbers-list">
-              {historyNumbers.map((number) => (
-                <div key={number} className="history-number">
-                  {number}
+            <div className="number-container">
+              {numbers.map((number, index) => (
+                <div
+                  key={number.key}
+                  className={clsx(
+                    "number-item",
+                    number.isChoose && "number-item--ischoose",
+                    newNumber === index + 1 && "number-item--new-number"
+                  )}
+                >
+                  <span>{index + 1}</span>
                 </div>
               ))}
             </div>
-          </div>
-          <div className="number-container">
-            {numbers.map((number, index) => (
-              <div
-                key={number.key}
-                className={clsx(
-                  "number-item",
-                  number.isChoose && "number-item--ischoose",
-                  newNumber === index + 1 && "number-item--new-number"
-                )}
-              >
-                <span>{index + 1}</span>
+            <div className="users-container">
+              <h3>Users ( {users.length} )</h3>
+              <div className="users-list">
+                {users.map((user) => (
+                  <User
+                    key={user.id}
+                    name={user.name}
+                    tickerNumber={user.tickerNumber}
+                    isRequestBingo={user.isRequestBingo}
+                  />
+                ))}
               </div>
-            ))}
-          </div>
-          <div className="users-container">
-            <h3>Users ( {users.length} )</h3>
-            <div className="users-list">
-              {users.map((user) => (
-                <User
-                  key={user.id}
-                  name={user.name}
-                  tickerNumber={user.tickerNumber}
-                  isRequestBingo={user.isRequestBingo}
-                />
-              ))}
             </div>
           </div>
         </div>
+        <div className="right-container"></div>
       </div>
-      <div className="right-container"></div>
-    </div>
+    </>
   );
 };

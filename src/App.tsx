@@ -1,5 +1,6 @@
 import "./App.css";
 import Header from "./components/Header";
+import { Host } from "./components/Host";
 import Ticket from "./components/Ticket";
 import LoginPage from "./pages/Login";
 import TicketListPage from "./pages/TicketList";
@@ -7,6 +8,8 @@ import { useUserInfo } from "./stores/userStore";
 
 function App() {
   const { name, ticketId } = useUserInfo();
+
+  if (name === "host") return <Host />;
 
   if (!name) return <LoginPage />;
   if (!ticketId) return <TicketListPage />;
