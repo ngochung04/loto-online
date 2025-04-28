@@ -29,6 +29,7 @@ const ControlPanel = () => {
       numberToCheck: bingoArr,
       isRequestBingo: true,
       checkResult: [],
+      fullSelection: selection,
     });
   };
 

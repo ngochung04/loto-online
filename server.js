@@ -20,6 +20,7 @@ let isStartGame = false;
 let isHostReady = false;
 let numberList = [];
 let playerBingo = [];
+let bingoTemp = {};
 
 const getTicketList = () => {
   let ticket_list = []; // Assuming ticket_list is defined somewhere
@@ -74,6 +75,7 @@ io.on("connection", (socket) => {
     io.emit("client:listener", {
       ticketSelectList: getTicketList(),
       isStartGame,
+      isHostReady,
     });
   });
 
@@ -82,12 +84,14 @@ io.on("connection", (socket) => {
   });
 
   socket.on("host:bingo", (_) => {
-    io.emit("bingo", { ..._, id: socket.id });
+    const { fullSelection, ...rest } = _;
+    bingoTemp[_.tickerNumber] = fullSelection;
+    io.emit("bingo", { ...rest, id: socket.id });
   });
 
   socket.on("disconnect", () => {
     userList = userList.filter((u) => u.id !== socket.id);
-    if (userList.find((x) => x.id === socket.id).name === "host")
+    if (userList.find((x) => x.id === socket.id)?.name === "host")
       isHostReady = false;
     io.emit("client:listener", {
       ticketSelectList: getTicketList(),
@@ -119,11 +123,22 @@ io.on("connection", (socket) => {
   });
 
   socket.on("client:player_bingo", (_) => {
+    isStartGame = false;
+    isHostReady = false;
     if (!playerBingo.length) playerBingo = _;
     _.forEach((x) => {
-      if (playerBingo.includes(x)) playerBingo.push(x);
+      if (!playerBingo.includes(x)) playerBingo.push(x);
     });
-    io.emit("client:listener", playerBingo);
+
+    io.emit("client:listener", {
+      playerBingo: playerBingo.map((x) => ({
+        id: x,
+        selection: bingoTemp[_],
+        name: userList.find((z) => z.ticket === x).name,
+      })),
+      isStartGame,
+      isHostReady,
+    });
   });
 
   socket.on("host:new_game", (_) => {
@@ -131,6 +146,7 @@ io.on("connection", (socket) => {
     isHostReady = true;
     playerBingo = [];
     numberList = [];
+    bingoTemp = {};
     userList = userList.map((x) => ({
       ...x,
       ticket: null,
@@ -148,6 +164,7 @@ io.on("connection", (socket) => {
       ticket: null,
       selection: [],
       ticketSelectList: [],
+      playerBingo: [],
     });
   });
 

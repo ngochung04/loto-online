@@ -14,6 +14,8 @@ const LoginPage = () => {
       const id = uuidv4();
       update("name", username.trim());
       update("uuid", id);
+      localStorage.setItem("name", username.trim());
+      localStorage.setItem("uuid", id);
       socket.emit("client:update_info", {
         name: username.trim(),
         uuid: id,

@@ -9,14 +9,14 @@ import { useUserInfo } from "./stores/userStore";
 import { useEffect } from "react";
 import { socket } from "./services/socket";
 import { TICKETS } from "./constance";
+import WaitingHost from "./components/WaitingHost";
+import Bingo from "./components/Bingo";
 
 function App() {
   const { ticket, name, isStartGame, playerBingo, isHostReady, update } =
     useUserInfo();
 
   useEffect(() => {
-    socket.connect();
-
     socket.on("client:listener", (_) => {
       Object.entries(_).forEach(([key, value]) => {
         update(key as any, value);
@@ -27,11 +27,27 @@ function App() {
       socket.off("client:listener");
       socket.disconnect();
     };
-  }, []);
+  }, [update]);
+
+  useEffect(() => {
+    const savedName = localStorage.getItem("name");
+    const savedUuid = localStorage.getItem("uuid");
+    if (savedName) {
+      update("name", savedName);
+
+      update("uuid", savedUuid ?? "");
+
+      socket.emit("client:update_info", {
+        name: savedName,
+        savedUuid,
+      });
+    }
+  }, [isHostReady, update]);
 
   if (name === "host") return <Host />;
   if (!name) return <LoginPage />;
-  if (!isHostReady) return <>waiting host</>;
+  if (!isHostReady) return <WaitingHost />;
+  if (playerBingo.length) return <Bingo />;
   if (!isStartGame) return <TicketListPage />;
 
   return (
@@ -69,14 +85,6 @@ function App() {
         <Ticket ticketId={ticket as keyof typeof TICKETS} />
         {/* <Ticket ticketId={1} /> */}
         <ControlPanel />
-        {playerBingo.map((x) => {
-          return (
-            <>
-              {x}
-              <Ticket ticketId={x as keyof typeof TICKETS} />
-            </>
-          );
-        })}
       </div>
     </div>
   );

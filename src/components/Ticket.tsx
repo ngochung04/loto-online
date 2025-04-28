@@ -4,9 +4,11 @@ import { useUserInfo } from "../stores/userStore";
 const Ticket = ({
   ticketId,
   size = "default",
+  bingoSelection,
 }: {
   ticketId: keyof typeof TICKETS;
   size?: "default" | "small" | "preview";
+  bingoSelection?: number[];
 }) => {
   const { selection, update } = useUserInfo();
   const isPreview = size === "small" || size === "preview";
@@ -36,7 +38,7 @@ const Ticket = ({
           <div
             key={i}
             className={`ticket_row__number ${
-              selection.includes(value) ? "checked" : ""
+              (bingoSelection || selection).includes(value) ? "checked" : ""
             }`}
             onClick={() => handleClick(value)}
             style={{ cursor: "pointer" }}

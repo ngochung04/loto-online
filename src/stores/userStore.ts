@@ -10,7 +10,7 @@ interface IUserInfo {
   numberList: number[];
   isStartGame: boolean;
   isHostReady: boolean;
-  playerBingo: number[];
+  playerBingo: { id: number; selection: number[]; name: string }[];
 }
 
 interface IUserInfoStore extends IUserInfo {
