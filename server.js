@@ -33,7 +33,19 @@ io.on("connection", (socket) => {
 
   socket.on("client:update_info", (_) => {
     const index = userList.findIndex((x) => x.id === socket.id);
-
+    if (_.name === "host") {
+      io.emit(
+        "host:get_users",
+        userList.map((x) => ({
+          id: x.id,
+          name: x.name,
+          tickerNumber: x.ticket,
+          isRequestBingo: false,
+          numberToCheck: [],
+          checkResult: [],
+        }))
+      );
+    }
     if (index === -1) {
       const user = { ..._, id: socket.id };
       userList.push(user);
@@ -93,7 +105,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("host:new_game", (_) => {
-    isStartGame = false;
+    isStartGame = TransformStreamDefaultController;
     numberList = [];
     userList = userList.map((x) => ({
       ...x,

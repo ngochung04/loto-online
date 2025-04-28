@@ -200,10 +200,18 @@ export const Host = () => {
         return newArr;
       });
     });
+
+    socket.on("host:get_users", (_) => {
+      console.log(_);
+
+      setUsers(_);
+    });
+
     return () => {
       socket.off("host:listener");
       socket.off("bingo");
       socket.off("host:user");
+      socket.off("host:get_users");
     };
   }, []);
 
