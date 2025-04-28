@@ -2,6 +2,8 @@ import clsx from "clsx";
 import { AvatarGenerator } from "random-avatar-generator";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
+import Ticket from "./Ticket";
+import { TICKETS } from "../constance";
 
 interface UserProps {
   id: string;
@@ -16,6 +18,7 @@ interface UserProps {
 }
 
 export const User = ({
+  id,
   name,
   tickerNumber,
   isRequestBingo,
@@ -26,7 +29,7 @@ export const User = ({
   onRejectBingo,
 }: UserProps) => {
   const generator = new AvatarGenerator();
-  const avatar = generator.generateRandomAvatar();
+  const avatar = generator.generateRandomAvatar(id);
 
   const getTicketImage = (number: number) => {
     return `/${number}.jpg`;
@@ -110,11 +113,17 @@ export const User = ({
       <div className="user-item-ticker">
         <span>Ticker: {tickerNumber}</span>
         <div className="ticket-preview">
-          <PhotoProvider>
+          {/* <PhotoProvider>
             <PhotoView src={getTicketImage(tickerNumber)}>
               <img src={getTicketImage(tickerNumber)} alt={name} />
             </PhotoView>
-          </PhotoProvider>
+          </PhotoProvider> */}
+          {tickerNumber && (
+            <Ticket
+              ticketId={tickerNumber as keyof typeof TICKETS}
+              size="preview"
+            />
+          )}
         </div>
       </div>
     </div>

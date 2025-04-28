@@ -6,10 +6,10 @@ const Ticket = ({
   size = "default",
 }: {
   ticketId: keyof typeof TICKETS;
-  size?: "default" | "small";
+  size?: "default" | "small" | "preview";
 }) => {
   const { selection, update } = useUserInfo();
-  const isPreview = size === "small";
+  const isPreview = size === "small" || size === "preview";
 
   const handleClick = (number: number) => {
     if (isPreview) return;
@@ -58,7 +58,7 @@ const Ticket = ({
   };
 
   return (
-    <div className={`ticket_container ${isPreview ? "preview" : ""}`}>
+    <div className={`ticket_container ${size}`}>
       <div className="ticket_block">
         <div className="ticket_row">{renderRow(TICKETS[ticketId][0])} </div>
         <div className="ticket_row">{renderRow(TICKETS[ticketId][1])} </div>

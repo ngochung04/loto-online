@@ -3,6 +3,23 @@
   width: 100%;
 }
 
+1: "#f66d91",
+2: "#f66d91",
+3: "#915ab8",
+4: "#915ab8",
+5: "#eed652",
+6: "#eed652",
+7: "#0b88c3",
+8: "#0b88c3",
+9: "#fc7974",
+10: "#fc7974",
+11: "#f17845",
+12: "#f17845",
+13: "#7abb6b",
+14: "#7abb6b",
+15: "#b0c552",
+16: "#b0c552",
+
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -75,15 +92,28 @@
   color: #333;
 }
 
-.ticket_container.preview {
+.ticket_container.small {
   gap: 8px;
   padding: 8px;
 }
 
-.ticket_container.preview .ticket_row__number {
+.ticket_container.small .ticket_row__number {
   width: 22.5px;
   height: 40px;
   font-size: 16px;
+}
+
+.ticket_container.preview {
+  gap: 1px;
+  padding: 1px;
+  border: 0.05px solid black;
+}
+
+.ticket_container.preview .ticket_row__number {
+  width: 5px;
+  height: 12px;
+  font-size: 4px;
+  border: 0.1px solid black;
 }
 
 .ticket_row__number.checked {

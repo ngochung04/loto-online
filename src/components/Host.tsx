@@ -140,6 +140,7 @@ export const Host = () => {
     );
   };
 
+  const renderUsers = users.filter((user) => user.name !== "host");
   useEffect(() => {
     socket.on("host:listener", (_) => {
       setConfig(_);
@@ -254,7 +255,7 @@ export const Host = () => {
             </div>
             <div className="users-container">
               <div className="users-header">
-                <h3>Users ( {users.length} )</h3>
+                <h3>Users ( {renderUsers.length} )</h3>
                 {countBingoUsers() > 1 && (
                   <button
                     className="bingo-action-button bingo-action-button--check"
@@ -284,9 +285,10 @@ export const Host = () => {
                 )}
               </div>
               <div className="users-list">
-                {users.map((user) => (
+                {renderUsers.map((user) => (
                   <User
                     key={user.id}
+                    id={user.id}
                     name={user.name}
                     tickerNumber={user.tickerNumber}
                     isRequestBingo={user.isRequestBingo}
