@@ -45,6 +45,7 @@
 
 .ticket_container {
   width: fit-content;
+  max-height: fit-content;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -131,7 +132,7 @@
   font-size: 48px;
   font-weight: bold;
 }
-.btn-bingo:hover {
+.btn-bingo-animation:hover {
   background-image: linear-gradient(
     to right,
     #e7484f,

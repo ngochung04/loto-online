@@ -27,6 +27,32 @@ const LoginPage = () => {
         background: "linear-gradient(135deg, #f8fafc 0%, #dbeafe 100%)",
       }}
     >
+      <div
+        style={{
+          position: "fixed",
+          top: 16,
+          left: 16,
+          zIndex: 1000,
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <span
+          style={{
+            background: "linear-gradient(90deg, #ff512f 0%, #dd2476 100%)",
+            color: "#fff",
+            fontWeight: 700,
+            fontSize: 18,
+            padding: "4px 16px",
+            borderRadius: 20,
+            letterSpacing: 2,
+            boxShadow: "0 2px 8px rgba(221,36,118,0.15)",
+            textTransform: "uppercase",
+          }}
+        >
+          BETA
+        </span>
+      </div>
       <form
         onSubmit={handleSubmit}
         style={{

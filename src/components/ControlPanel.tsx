@@ -32,7 +32,24 @@ const ControlPanel = () => {
   };
 
   return (
-    <div style={{ width: "100%", zIndex: 10 }}>
+    <div style={{ width: "100%", zIndex: 10, maxHeight: "100vh" }}>
+      <div
+        className="container"
+        style={{
+          marginBottom: "16px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <button
+          style={{ opacity: getBingoList() ? "1" : ".5", width: "100%" }}
+          className={`btn-bingo ${getBingoList() ? "btn-bingo-animation" : ""}`}
+          onClick={handleBingo}
+        >
+          Kinh
+        </button>
+      </div>
       <div
         className="container"
         style={{
@@ -45,23 +62,6 @@ const ControlPanel = () => {
         {numberList.map((x) => (
           <div className="history-number">{x}</div>
         ))}
-      </div>
-      <div
-        className="container"
-        style={{
-          marginBottom: "16px",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <button
-          style={{ opacity: getBingoList() ? "1" : ".5" }}
-          className="btn-bingo"
-          onClick={handleBingo}
-        >
-          Kinh
-        </button>
       </div>
     </div>
   );
