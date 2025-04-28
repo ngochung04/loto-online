@@ -91,6 +91,9 @@
   font-size: 32px;
   font-weight: bold;
   color: #333;
+  -webkit-user-select: none;
+  -ms-user-select: none; 
+  user-select: none;
 }
 
 .ticket_container.small {
