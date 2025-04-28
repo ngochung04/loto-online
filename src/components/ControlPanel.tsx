@@ -28,6 +28,7 @@ const ControlPanel = () => {
       ticketNumber: ticket,
       numberToCheck: bingoArr,
       isRequestBingo: true,
+      checkResult: [],
     });
   };
 

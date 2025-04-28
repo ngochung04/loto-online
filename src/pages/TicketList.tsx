@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { socket } from "../services/socket";
 
 const TicketListPage = () => {
-  const { name, ticket, ticketSelectList, update } = useUserInfo();
+  const { name, ticket, ticketSelectList, update, isStartGame } = useUserInfo();
 
   useEffect(() => {
     socket.emit("client:get_ticket");
@@ -18,6 +18,7 @@ const TicketListPage = () => {
 
   return (
     <>
+      {!isStartGame && <div className="ticket-list-page-background">asdasdasd</div>}
       <div
         style={{
           minHeight: "100vh",
