@@ -17,7 +17,9 @@ const io = new Server(server, {
 
 let userList = [];
 let isStartGame = false;
+let isHostReady = false;
 let numberList = [];
+let playerBingo = [];
 
 const getTicketList = () => {
   let ticket_list = []; // Assuming ticket_list is defined somewhere
@@ -85,8 +87,20 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     userList = userList.filter((u) => u.id !== socket.id);
-    io.emit("client:listener", { ticketSelectList: getTicketList() });
+    if (userList.find((x) => x.id === socket.id).name === "host")
+      isHostReady = false;
+    io.emit("client:listener", {
+      ticketSelectList: getTicketList(),
+      isHostReady,
+    });
     io.emit("host:user_logout", { id: socket.id });
+  });
+
+  socket.on("host:ready", () => {
+    isHostReady = true;
+    io.emit("client:listener", {
+      isHostReady,
+    });
   });
 
   socket.on("host:start_game", (_) => {
@@ -104,8 +118,18 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("client:player_bingo", (_) => {
+    if (!playerBingo.length) playerBingo = _;
+    _.forEach((x) => {
+      if (playerBingo.includes(x)) playerBingo.push(x);
+    });
+    io.emit("client:listener", playerBingo);
+  });
+
   socket.on("host:new_game", (_) => {
-    isStartGame = TransformStreamDefaultController;
+    isStartGame = false;
+    isHostReady = true;
+    playerBingo = [];
     numberList = [];
     userList = userList.map((x) => ({
       ...x,
@@ -119,6 +143,7 @@ io.on("connection", (socket) => {
     });
     io.emit("client:listener", {
       isStartGame,
+      isHostReady,
       numberList,
       ticket: null,
       selection: [],

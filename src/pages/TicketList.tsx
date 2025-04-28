@@ -18,7 +18,7 @@ const TicketListPage = () => {
 
   return (
     <>
-      {!isStartGame && <div className="ticket-list-page-background">asdasdasd</div>}
+      {/* {!isStartGame && <div className="ticket-list-page-background">asdasdasd</div>} */}
       <div
         style={{
           minHeight: "100vh",

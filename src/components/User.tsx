@@ -8,7 +8,7 @@ import { TICKETS } from "../constance";
 interface UserProps {
   id: string;
   name: string;
-  tickerNumber: number;
+  tickerNumber?: number;
   isRequestBingo: boolean;
   numberToCheck: number[];
   checkResult: number[];
@@ -110,22 +110,26 @@ export const User = ({
           </>
         )}
       </div>
-      <div className="user-item-ticker">
-        <span>Ticker: {tickerNumber}</span>
-        <div className="ticket-preview">
-          {/* <PhotoProvider>
+      {tickerNumber ? (
+        <div className="user-item-ticker">
+          <span>Ticker: {tickerNumber}</span>
+          <div className="ticket-preview">
+            {/* <PhotoProvider>
             <PhotoView src={getTicketImage(tickerNumber)}>
               <img src={getTicketImage(tickerNumber)} alt={name} />
             </PhotoView>
           </PhotoProvider> */}
-          {tickerNumber && (
-            <Ticket
-              ticketId={tickerNumber as keyof typeof TICKETS}
-              size="preview"
-            />
-          )}
+            {tickerNumber && (
+              <Ticket
+                ticketId={tickerNumber as keyof typeof TICKETS}
+                size="preview"
+              />
+            )}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div style={{ color: "red" }}> Chưa sẵn sàng</div>
+      )}
     </div>
   );
 };

@@ -11,14 +11,13 @@ import { socket } from "./services/socket";
 import { TICKETS } from "./constance";
 
 function App() {
-  const { ticket, name, isStartGame, update } = useUserInfo();
+  const { ticket, name, isStartGame, playerBingo, isHostReady, update } =
+    useUserInfo();
 
   useEffect(() => {
     socket.connect();
 
     socket.on("client:listener", (_) => {
-      console.log(_);
-
       Object.entries(_).forEach(([key, value]) => {
         update(key as any, value);
       });
@@ -32,6 +31,7 @@ function App() {
 
   if (name === "host") return <Host />;
   if (!name) return <LoginPage />;
+  if (!isHostReady) return <>waiting host</>;
   if (!isStartGame) return <TicketListPage />;
 
   return (
@@ -69,6 +69,14 @@ function App() {
         <Ticket ticketId={ticket as keyof typeof TICKETS} />
         {/* <Ticket ticketId={1} /> */}
         <ControlPanel />
+        {playerBingo.map((x) => {
+          return (
+            <>
+              {x}
+              <Ticket ticketId={x as keyof typeof TICKETS} />
+            </>
+          );
+        })}
       </div>
     </div>
   );

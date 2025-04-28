@@ -1,6 +1,7 @@
 import React from "react";
 import { useUserInfo } from "../stores/userStore";
 import { socket } from "../services/socket";
+import { v4 as uuidv4 } from "uuid";
 
 const LoginPage = () => {
   const { update } = useUserInfo();
@@ -10,9 +11,12 @@ const LoginPage = () => {
     e.preventDefault();
 
     if (username.trim()) {
+      const id = uuidv4();
       update("name", username.trim());
+      update("uuid", id);
       socket.emit("client:update_info", {
         name: username.trim(),
+        uuid: id,
       });
     }
   };

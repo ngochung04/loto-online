@@ -8,7 +8,7 @@ import utc from "dayjs/plugin/utc";
 interface User {
   id: string;
   name: string;
-  tickerNumber: number;
+  tickerNumber?: number;
   isRequestBingo: boolean;
   numberToCheck: number[];
   checkResult: number[];
@@ -95,6 +95,7 @@ export const Host = () => {
         key: `number-${index + 1}`,
       }))
     );
+    setUsers((prev) => prev.map((x) => ({ ...x, tickerNumber: undefined })));
   };
 
   const handleEndGame = () => {
@@ -127,6 +128,15 @@ export const Host = () => {
         user.isRequestBingo ? { ...user, isRequestBingo: false } : user
       )
     );
+
+    const playerBingo: number[] = [];
+    users.forEach((x) => {
+      if (x.isRequestBingo) {
+        playerBingo.push(x?.tickerNumber as number);
+      }
+    });
+
+    socket.emit("client:player_bingo", playerBingo);
   };
 
   const rejectAllBingoFromClient = () => {
@@ -143,6 +153,8 @@ export const Host = () => {
         user.id === id ? { ...user, isRequestBingo: false } : user
       )
     );
+    const playerBingo = users.find((x) => x.id === id);
+    socket.emit("client:player_bingo", [playerBingo?.tickerNumber]);
   };
 
   const rejectBingoFromClient = (id: string) => {
@@ -188,7 +200,6 @@ export const Host = () => {
       setUsers((prev) => prev.filter((x) => _.id !== x.id));
     });
     socket.on("bingo", (_) => {
-      console.log("bingo", _);
       setUsers((prev) => {
         const newArr = prev.map((x) => {
           if (x.id === _.id) {
@@ -202,8 +213,6 @@ export const Host = () => {
     });
 
     socket.on("host:get_users", (_) => {
-      console.log(_);
-
       setUsers(_);
     });
 
@@ -267,7 +276,7 @@ export const Host = () => {
             </button>
             <button
               disabled={config.isCanStart}
-              onClick={() => {}}
+              onClick={handleStartGame}
               className="button-new-number"
               style={{ opacity: config.isCanStart ? 0.5 : 1 }}
             >
@@ -362,7 +371,7 @@ export const Host = () => {
                   key={user.id}
                   id={user.id}
                   name={user.name}
-                  tickerNumber={user.tickerNumber}
+                  tickerNumber={user?.tickerNumber}
                   isRequestBingo={user.isRequestBingo}
                   numberToCheck={user.numberToCheck}
                   checkResult={user.checkResult}
