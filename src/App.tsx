@@ -1,5 +1,4 @@
 import "./App.css";
-import Header from "./components/Header";
 import History from "./components/History";
 import { Host } from "./components/Host";
 import ControlPanel from "./components/ControlPanel";
@@ -9,21 +8,31 @@ import TicketListPage from "./pages/TicketList";
 import { useUserInfo } from "./stores/userStore";
 import { useEffect } from "react";
 import { socket } from "./services/socket";
+import { TICKETS } from "./constance";
 
 function App() {
-  const { name, ticketId } = useUserInfo();
+  const { ticket, name, isStartGame, update } = useUserInfo();
 
   useEffect(() => {
     socket.connect();
 
+    socket.on("client:listener", (_) => {
+      console.log(_);
+
+      Object.entries(_).forEach(([key, value]) => {
+        update(key as any, value);
+      });
+    });
+
     return () => {
+      socket.off("client:listener");
       socket.disconnect();
     };
   }, []);
 
   if (name === "host") return <Host />;
   if (!name) return <LoginPage />;
-  if (!ticketId) return <TicketListPage />;
+  if (!isStartGame) return <TicketListPage />;
 
   return (
     <div
@@ -34,7 +43,6 @@ function App() {
         padding: 0,
       }}
     >
-      <Header />
       <div
         className="tickets-list"
         style={{
@@ -58,7 +66,7 @@ function App() {
           }}
         />
         <History />
-        <Ticket ticketId={ticketId} />
+        <Ticket ticketId={ticket as keyof typeof TICKETS} />
         {/* <Ticket ticketId={1} /> */}
         <ControlPanel />
       </div>

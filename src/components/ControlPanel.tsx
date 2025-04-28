@@ -1,17 +1,33 @@
+import { TICKETS } from "../constance";
 import { socket } from "../services/socket";
-import { useUserData, useUserInfo } from "../stores/userStore";
+import { useUserInfo } from "../stores/userStore";
 
 const ControlPanel = () => {
-  const number = [1, 23, 3, 4, 5, 63, 1, 23, 3, 4, 5, 63];
+  const { id, name, ticket, selection, numberList } = useUserInfo();
 
-  const { name, ticketId } = useUserInfo();
-  const { selection } = useUserData();
+  const getBingoList = () => {
+    const ticketSelected = TICKETS[ticket as keyof typeof TICKETS];
+    return ticketSelected.find((x) => {
+      if (
+        x.filter((y) => {
+          return selection.includes(y);
+        }).length === 5
+      )
+        return true;
+
+      return false;
+    });
+  };
 
   const handleBingo = () => {
-    socket.emit("request_bingo", {
+    const bingoArr = getBingoList();
+    if (!bingoArr) return;
+    socket.emit("host:bingo", {
+      id,
       name,
-      ticketId,
-      selection,
+      ticketNumber: ticket,
+      numberToCheck: bingoArr,
+      isRequestBingo: true,
     });
   };
 
@@ -26,7 +42,7 @@ const ControlPanel = () => {
           gap: "8px",
         }}
       >
-        {number.reverse().map((x) => (
+        {numberList.map((x) => (
           <div className="history-number">{x}</div>
         ))}
       </div>
@@ -39,8 +55,12 @@ const ControlPanel = () => {
           alignItems: "center",
         }}
       >
-        <button className="btn-bingo" onClick={handleBingo}>
-          KINH
+        <button
+          style={{ opacity: getBingoList() ? "1" : ".5" }}
+          className="btn-bingo"
+          onClick={handleBingo}
+        >
+          Kinh
         </button>
       </div>
     </div>

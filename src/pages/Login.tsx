@@ -3,15 +3,17 @@ import { useUserInfo } from "../stores/userStore";
 import { socket } from "../services/socket";
 
 const LoginPage = () => {
-  const { setName } = useUserInfo();
+  const { update } = useUserInfo();
   const [username, setUsername] = React.useState("");
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("asd");
 
-    socket.emit("request_login", username.trim());
     if (username.trim()) {
-      setName(username.trim());
+      update("name", username.trim());
+      socket.emit("client:update_info", {
+        name: username.trim(),
+      });
     }
   };
 

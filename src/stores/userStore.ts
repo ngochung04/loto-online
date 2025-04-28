@@ -1,48 +1,32 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import { TICKETS } from "../constance";
 
 interface IUserInfo {
-  name: string;
-  setName: (_: string) => void;
-  ticketId: keyof typeof TICKETS | null;
-  setTicketId: (_: keyof typeof TICKETS | null) => void;
-  logout: () => void;
-}
-
-export const useUserInfo = create<IUserInfo>()(
-  persist(
-    (set) => ({
-      name: "",
-      ticketId: null,
-      setName: (_) => {
-        set({ name: _ });
-      },
-      setTicketId: (_) => {
-        set({ ticketId: _ });
-      },
-      logout: () => {
-        set({ name: "", ticketId: null });
-      },
-    }),
-    {
-      name: "user-info", // name of the item in the storage (must be unique)
-    }
-  )
-);
-
-interface IUserData {
+  id?: string;
+  name?: string;
+  ticket?: number;
   selection: number[];
-  setSelection: (_: number[]) => void;
-  resetSelection: () => void;
+  ticketSelectList: number[];
+  numberList: number[];
+  isStartGame: boolean;
 }
 
-export const useUserData = create<IUserData>((set) => ({
+interface IUserInfoStore extends IUserInfo {
+  update: <T extends keyof IUserInfo>(key: T, value: IUserInfo[T]) => void;
+  updateAll: (data: IUserInfo) => void;
+}
+
+export const useUserInfo = create<IUserInfoStore>((set) => ({
+  id: undefined,
+  name: undefined,
+  ticket: undefined,
+  isStartGame: false,
   selection: [],
-  setSelection: (_) => {
-    set({ selection: _ });
+  ticketSelectList: [],
+  numberList: [],
+  update: (key, value) => {
+    set((state) => ({ ...state, [key]: value }));
   },
-  resetSelection: () => {
-    set(() => ({ selection: [] }));
+  updateAll: (data) => {
+    set({ ...data });
   },
 }));

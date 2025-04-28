@@ -1,21 +1,23 @@
 import { TICKETS } from "../constance";
 import Ticket from "../components/Ticket";
-import Header from "../components/Header";
-import { useUserData, useUserInfo } from "../stores/userStore";
+import { useUserInfo } from "../stores/userStore";
 import { useEffect } from "react";
 import { socket } from "../services/socket";
 
 const TicketListPage = () => {
-  const { name, setTicketId } = useUserInfo();
-  const { setSelection } = useUserData();
+  const { name, ticket, ticketSelectList, update } = useUserInfo();
 
   useEffect(() => {
-    setSelection([]);
+    socket.emit("client:get_ticket");
   }, []);
+
+  const handleSelectTicket = (id: number) => () => {
+    update("ticket", id);
+    socket.emit("client:update_info", { name, ticket: +id });
+  };
 
   return (
     <>
-      <Header />
       <div
         style={{
           minHeight: "100vh",
@@ -34,27 +36,36 @@ const TicketListPage = () => {
             display: "grid",
             gridAutoFlow: "row",
             gridAutoColumns: "max-content",
-            gridTemplateColumns: "repeat(auto-fit, minmax(230px, max-content))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(250px, max-content))",
             justifyContent: "center",
             gap: 24,
             width: "100%",
           }}
         >
-          {Object.keys(TICKETS).map((id) => (
-            <div
-              key={id}
-              style={{ cursor: "pointer", transition: "transform 0.15s" }}
-              onClick={() => {
-                setTicketId(Number(id) as keyof typeof TICKETS);
-                socket.emit("request_ticket", { name, ticketId: +id });
-              }}
-            >
-              <Ticket
-                ticketId={Number(id) as keyof typeof TICKETS}
-                size="small"
-              />
-            </div>
-          ))}
+          {Object.keys(TICKETS).map((id) => {
+            const isSelected = ticketSelectList.includes(+id);
+            return (
+              <div
+                key={id}
+                style={{
+                  boxSizing: "border-box",
+                  border:
+                    ticket === Number(id)
+                      ? "5px solid red"
+                      : "5px solid transparent",
+                  cursor: isSelected ? "not-allowed" : "pointer",
+                  transition: "transform 0.15s, border-color 0.15s",
+                  opacity: isSelected && !(ticket === Number(id)) ? 0.3 : 1,
+                }}
+                onClick={isSelected ? () => {} : handleSelectTicket(Number(id))}
+              >
+                <Ticket
+                  ticketId={Number(id) as keyof typeof TICKETS}
+                  size="small"
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
     </>

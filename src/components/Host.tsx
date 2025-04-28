@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { User } from "./User";
-import Header from "./Header";
+import { socket } from "../services/socket";
 
 interface User {
   id: string;
@@ -16,6 +16,10 @@ interface User {
 }
 
 export const Host = () => {
+  const [config, setConfig] = useState({
+    isCanStart: false,
+    isCanCallNewNumber: false,
+  });
   const [numbers, setNumbers] = useState<
     { number: number; isChoose: boolean; key: string }[]
   >(
@@ -45,8 +49,11 @@ export const Host = () => {
           : n
       )
     );
+
+    socket.emit("host:new_number", selected);
+
     setNewNumber(selected);
-    setHistoryNumbers([...historyNumbers, selected]);
+    setHistoryNumbers([selected, ...historyNumbers]);
   };
 
   const checkBingoFromClient = (id: string) => {
@@ -58,6 +65,9 @@ export const Host = () => {
     if (bingoNumbers.length === 0) {
       bingoNumbers = [-1, -1, -1, -1, -1];
     }
+
+    console.log(numbers);
+
     setUsers((users) =>
       users.map((user) =>
         user.id === id ? { ...user, checkResult: bingoNumbers } : user
@@ -131,101 +141,44 @@ export const Host = () => {
   };
 
   useEffect(() => {
-    setUsers([
-      {
-        id: "1",
-        name: "Yan Pham",
-        tickerNumber: 1,
-        isRequestBingo: false,
-        numberToCheck: [13, 84, 6, 15, 43],
-        checkResult: [],
-        onCheckBingo: () => {},
-        onAcceptBingo: () => {},
-        onRejectBingo: () => {},
-      },
-      {
-        id: "2",
-        name: "Ngan NTT",
-        tickerNumber: 5,
-        isRequestBingo: true,
-        numberToCheck: [13, 84, 6, 15, 43],
-        checkResult: [],
-        onCheckBingo: () => {},
-        onAcceptBingo: () => {},
-        onRejectBingo: () => {},
-      },
-      {
-        id: "3",
-        name: "Ngoc Hung",
-        tickerNumber: 3,
-        isRequestBingo: false,
-        numberToCheck: [13, 84, 6, 15, 43],
-        checkResult: [],
-        onCheckBingo: () => {},
-        onAcceptBingo: () => {},
-        onRejectBingo: () => {},
-      },
-      {
-        id: "4",
-        name: "Chi Chu",
-        tickerNumber: 15,
-        isRequestBingo: true,
-        numberToCheck: [13, 84, 6, 15, 43],
-        checkResult: [],
-        onCheckBingo: () => {},
-        onAcceptBingo: () => {},
-        onRejectBingo: () => {},
-      },
-      {
-        id: "5",
-        name: "Huyen Nguyen",
-        tickerNumber: 6,
-        isRequestBingo: false,
-        numberToCheck: [13, 84, 6, 15, 43],
-        checkResult: [],
-        onCheckBingo: () => {},
-        onAcceptBingo: () => {},
-        onRejectBingo: () => {},
-      },
-      {
-        id: "6",
-        name: "Phuong Linh",
-        tickerNumber: 7,
-        isRequestBingo: false,
-        numberToCheck: [13, 84, 6, 15, 43],
-        checkResult: [],
-        onCheckBingo: () => {},
-        onAcceptBingo: () => {},
-        onRejectBingo: () => {},
-      },
-      {
-        id: "7",
-        name: "Nam Nho",
-        tickerNumber: 10,
-        isRequestBingo: false,
-        numberToCheck: [13, 84, 6, 15, 43],
-        checkResult: [],
-        onCheckBingo: () => {},
-        onAcceptBingo: () => {},
-        onRejectBingo: () => {},
-      },
-      {
-        id: "8",
-        name: "Anh Duy",
-        tickerNumber: 11,
-        isRequestBingo: false,
-        numberToCheck: [13, 84, 6, 15, 43],
-        checkResult: [],
-        onCheckBingo: () => {},
-        onAcceptBingo: () => {},
-        onRejectBingo: () => {},
-      },
-    ]);
+    socket.on("host:listener", (_) => {
+      setConfig(_);
+    });
+    socket.on("host:user", (_) => {
+      setUsers((prev) => {
+        const index = prev.findIndex((x) => x.id === _.id);
+        if (index !== -1) {
+          const newArr = prev;
+          newArr[index] = _;
+          return newArr;
+        }
+        return [...prev, _];
+      });
+    });
+    socket.on("host:user_logout", (_) => {
+      setUsers((prev) => prev.filter((x) => _.id !== x.id));
+    });
+    socket.on("bingo", (_) => {
+      setUsers((prev) => {
+        const newArr = prev.map((x) => {
+          if (x.id === _.id) {
+            return { ...x, ..._ };
+          }
+          return x;
+        });
+        console.log(prev, newArr);
+        return newArr;
+      });
+    });
+    return () => {
+      socket.off("host:listener");
+      socket.off("bingo");
+      socket.off("host:user");
+    };
   }, []);
 
   return (
     <>
-      <Header />
       <div className="host-container">
         <div className="left-container">
           <div className="host-actions">
@@ -235,8 +188,42 @@ export const Host = () => {
                   numbers.length
                 } số`}
               </div>
-              <button onClick={handleNewNumber} className="button-new-number">
+              <button
+                style={{ opacity: !config.isCanCallNewNumber ? 0.5 : 1 }}
+                disabled={!config.isCanCallNewNumber}
+                onClick={handleNewNumber}
+                className="button-new-number"
+              >
                 Số mới
+              </button>
+              <button
+                disabled={!config.isCanStart}
+                onClick={() => {
+                  socket.emit("host:start_game");
+                }}
+                className="button-new-number"
+                style={{ opacity: !config.isCanStart ? 0.5 : 1 }}
+              >
+                Start
+              </button>
+              <button
+                disabled={config.isCanStart}
+                onClick={() => {
+                  socket.emit("host:new_game");
+                  setHistoryNumbers([]);
+                  setNewNumber(0);
+                  setNumbers(
+                    Array.from({ length: 90 }, (_, index) => ({
+                      number: index + 1,
+                      isChoose: false,
+                      key: `number-${index + 1}`,
+                    }))
+                  );
+                }}
+                className="button-new-number"
+                style={{ opacity: config.isCanStart ? 0.5 : 1 }}
+              >
+                New Game
               </button>
             </div>
           </div>

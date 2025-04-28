@@ -15,69 +15,107 @@ const io = new Server(server, {
   },
 });
 
-const calledNumbers = [];
-const allNumbers = Array.from({ length: 90 }, (_, i) => i + 1); // Example 1-90
+let userList = [];
+let isStartGame = false;
+let numberList = [];
+
+const getTicketList = () => {
+  let ticket_list = []; // Assuming ticket_list is defined somewhere
+  userList.forEach((_) => {
+    ticket_list.push(_.ticket);
+  });
+
+  return ticket_list;
+};
 
 io.on("connection", (socket) => {
   console.log("A user connected:", io.engine.clientsCount, socket.id);
 
-  socket.on("host:call_number", () => {
-    const remaining = allNumbers.filter((n) => !calledNumbers.includes(n));
-    if (remaining.length > 0) {
-      const newNumber = remaining[Math.floor(Math.random() * remaining.length)];
-      calledNumbers.push(newNumber);
-      io.emit("server:new_number", newNumber);
-    }
-  });
+  socket.on("client:update_info", (_) => {
+    const index = userList.findIndex((x) => x.id === socket.id);
 
-  socket.on("player:bingo_request", (playerBoard) => {
-    // Simplified validation for demo
-    const flatBoard = playerBoard.flat();
-    const matched = flatBoard.filter((num) =>
-      calledNumbers.includes(num)
-    ).length;
-    if (matched >= 5) {
-      // assume 5 matches is enough for bingo
-      io.emit("server:bingo_success", socket.id);
+    if (index === -1) {
+      const user = { ..._, id: socket.id };
+      userList.push(user);
+      io.emit("host:user", {
+        id: socket.id,
+        name: _.name,
+        tickerNumber: _.ticket,
+        isRequestBingo: false,
+        numberToCheck: [],
+        checkResult: [],
+      });
     } else {
-      socket.emit("server:bingo_fail");
+      userList[index] = { ...userList[index], ..._ };
+      io.emit("host:user", {
+        id: socket.id,
+        name: _.name,
+        tickerNumber: _.ticket,
+        isRequestBingo: false,
+        numberToCheck: [],
+        checkResult: [],
+      });
+    }
+
+    io.emit("client:listener", { ticketSelectList: getTicketList() });
+  });
+
+  socket.on("client:get_ticket", () => {
+    io.emit("client:listener", { ticketSelectList: getTicketList() });
+  });
+
+  socket.on("host:bingo", (_) => {
+    io.emit("bingo", { ..._, id: socket.id });
+  });
+
+  socket.on("disconnect", () => {
+    userList = userList.filter((u) => u.id !== socket.id);
+    io.emit("client:listener", { ticketSelectList: getTicketList() });
+    io.emit("host:user_logout", { id: socket.id });
+  });
+
+  socket.on("host:start_game", (_) => {
+    if (
+      userList.filter((x) => !!x.ticket).length >=
+      io.engine.clientsCount - 1
+    ) {
+      isStartGame = true;
+      io.emit("host:listener", {
+        isCanCallNewNumber: true,
+      });
+      io.emit("client:listener", {
+        isStartGame,
+      });
     }
   });
 
-  socket.on("host:restart_game", () => {
-    calledNumbers.length = 0;
-    io.emit("server:restart_game");
-  });
-
-  socket.on("request_login", (_) => {
-    io.emit("request_login", {
-      name: "SYSTEM",
-      ticketId: 0,
-      message: _ + " join this room.",
+  socket.on("host:new_game", (_) => {
+    isStartGame = false;
+    numberList = [];
+    userList = userList.map((x) => ({
+      ...x,
+      ticket: null,
+      selection: [],
+      ticketSelectList: [],
+    }));
+    io.emit("host:listener", {
+      isCanStart: true,
+      isCanCallNewNumber: false,
+    });
+    io.emit("client:listener", {
+      isStartGame,
+      numberList,
+      ticket: null,
+      selection: [],
+      ticketSelectList: [],
     });
   });
 
-  socket.on("request_logout", (_) => {
-    io.emit("request_logout", {
-      name: "SYSTEM",
-      ticketId: 0,
-      message: _ + " out this room.",
-    });
-  });
+  socket.on("host:new_number", (_) => {
+    numberList.unshift(_);
 
-  socket.on("request_ticket", (_) => {
-    io.emit("request_ticket", {
-      name: "SYSTEM",
-      ticketId: 0,
-      message: _.name + " choose ticket number " + _.ticketId + ".",
-    });
-  });
-
-  socket.on("request_bingo", (_) => {
-    io.emit("request_bingo", {
-      name: "SYSTEM",
-      ticketId: 0,
-      message: _.name + " request Bingo!!!",
+    io.emit("client:listener", {
+      numberList,
     });
   });
 });

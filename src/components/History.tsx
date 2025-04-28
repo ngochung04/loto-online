@@ -1,32 +1,27 @@
-import { useEffect, useState } from "react";
-import { TICKET_COLORS } from "../constance";
-import { socket } from "../services/socket";
+// import { useEffect, useState } from "react";
+// import { TICKET_COLORS } from "../constance";
+// import { socket } from "../services/socket";
+// import { useUserInfo } from "../stores/userStore";
 
-interface IMessage {
-  name: string;
-  ticketId: number;
-  message: string;
-}
+// interface IMessage {
+//   name: string;
+//   ticketId: number;
+//   message: string;
+// }
 
 const History = () => {
-  const [message, setMessage] = useState<IMessage[]>([]);
+  // const [message, setMessage] = useState<IMessage[]>([]);
+  // const { setId } = useUserInfo();
 
-  useEffect(() => {
-    const addMessage = (data: IMessage) => {
-      setMessage((prev) => [...prev, data]);
-    };
-    socket.on("request_login", addMessage);
-    socket.on("request_logout", addMessage);
-    socket.on("request_bingo", addMessage);
-    socket.on("request_ticket", addMessage);
+  // useEffect(() => {
+  //   socket.on("client:setup", (_) => {
+  //     setId(_.socketId);
+  //   });
 
-    return () => {
-      socket.off("request_login");
-      socket.off("request_logout");
-      socket.off("request_bingo");
-      socket.off("request_ticket");
-    };
-  }, []);
+  //   return () => {
+  //     socket.off("request_login");
+  //   };
+  // }, []);
   return (
     <div
       className="container"
@@ -37,7 +32,7 @@ const History = () => {
         gap: "8px",
       }}
     >
-      {!!message.length &&
+      {/* {!!message.length &&
         message?.map((_, i) => (
           <div
             key={i}
@@ -59,7 +54,7 @@ const History = () => {
             </span>
             <span>{_.message}</span>
           </div>
-        ))}
+        ))} */}
     </div>
   );
 };

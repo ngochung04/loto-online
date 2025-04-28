@@ -1,5 +1,5 @@
 import { TICKETS, TICKET_COLORS } from "../constance";
-import { useUserData } from "../stores/userStore";
+import { useUserInfo } from "../stores/userStore";
 
 const Ticket = ({
   ticketId,
@@ -8,16 +8,19 @@ const Ticket = ({
   ticketId: keyof typeof TICKETS;
   size?: "default" | "small";
 }) => {
-  const { selection, setSelection } = useUserData();
+  const { selection, update } = useUserInfo();
   const isPreview = size === "small";
 
   const handleClick = (number: number) => {
     if (isPreview) return;
     if (selection.includes(number)) {
-      setSelection(selection.filter((_) => _ !== number));
+      update(
+        "selection",
+        selection.filter((_) => _ !== number)
+      );
       return;
     }
-    setSelection([...selection, number]);
+    update("selection", [...selection, number]);
   };
 
   const renderRow = (data: number[]) => {

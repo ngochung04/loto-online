@@ -4,6 +4,7 @@ import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
 
 interface UserProps {
+  id: string;
   name: string;
   tickerNumber: number;
   isRequestBingo: boolean;
