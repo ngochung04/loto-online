@@ -57,7 +57,10 @@ io.on("connection", (socket) => {
       });
     }
 
-    io.emit("client:listener", { ticketSelectList: getTicketList() });
+    io.emit("client:listener", {
+      ticketSelectList: getTicketList(),
+      isStartGame,
+    });
   });
 
   socket.on("client:get_ticket", () => {
