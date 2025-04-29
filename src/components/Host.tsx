@@ -67,7 +67,7 @@ export const Host = () => {
 
   const handleAuto = (type?: "disable" | "enable" | any) => {
     if (autoID || type === "disable") {
-      clearInterval(autoID.current);
+      clearInterval(autoID);
       setAutoID(null);
       setAutoTime(0);
     } else {
