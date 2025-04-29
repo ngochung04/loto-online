@@ -7,6 +7,7 @@ import { useUserInfo } from "../stores/userStore";
 const ControlPanel = () => {
   const { id, name, ticket, selection, numberList } = useUserInfo();
   const [bingoDisabled, setBingoDisabled] = useState(false);
+  const [countdown, setCountdown] = useState(0);
 
   useEffect(() => {
     const speak = (id: number) => {
@@ -40,7 +41,18 @@ const ControlPanel = () => {
     if (!bingoArr) return;
 
     setBingoDisabled(true);
-    setTimeout(() => setBingoDisabled(false), 3000);
+    setCountdown(10);
+    const interval = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setBingoDisabled(false);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
     socket.emit("host:bingo", {
       id,
       name,
@@ -76,7 +88,7 @@ const ControlPanel = () => {
           onClick={handleBingo}
           disabled={!getBingoList() || bingoDisabled}
         >
-          Kinh
+          {bingoDisabled && countdown > 0 ? `(${countdown}s)` : "Kinh"}
         </button>
       </div>
       <div className="container history-number-container">

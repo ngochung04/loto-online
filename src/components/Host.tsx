@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import clsx from "clsx";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { User } from "./User";
 import { socket } from "../services/socket";
 
@@ -42,11 +42,17 @@ export const Host = () => {
   const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null);
 
   const [autoID, setAutoID] = useState<any>(null);
-  const [autoTime, setAutoTime] = useState<number>(0);
+  const [autoTime, setAutoTime] = useState<number>(5000);
+
+  const ref = useRef(null);
 
   const handleNewNumber = useCallback(() => {
     const available = numbers.filter((n) => !n.isChoose);
-    if (!available.length) return;
+    if (!available.length) {
+      clearInterval(autoID);
+      setAutoID(null);
+      return;
+    }
 
     const selected =
       available[Math.floor(Math.random() * available.length)].number;
@@ -59,24 +65,23 @@ export const Host = () => {
       )
     );
 
-    socket.emit("host:new_number", selected);
-
     setNewNumber(selected);
     setHistoryNumbers((prev) => [selected, ...prev]);
+    socket.emit("host:new_number", selected);
   }, [numbers]);
 
   const handleAuto = (type?: "disable" | "enable" | any) => {
-    if (autoID || type === "disable") {
+    if (type === "disable") {
       clearInterval(autoID);
       setAutoID(null);
-      setAutoTime(0);
-    } else {
-      handleNewNumber();
-      const timerId = setInterval(() => {
-        handleNewNumber();
-      }, autoTime || 5000);
-      setAutoID(timerId);
+      return;
     }
+
+    ref.current?.click();
+    const timer = setInterval(() => {
+      ref.current?.click();
+    }, autoTime);
+    setAutoID(timer);
   };
 
   useEffect(() => {
@@ -128,7 +133,6 @@ export const Host = () => {
 
   const checkAllBingoFromClient = () => {
     const bingoUsers = users.filter((user) => user.isRequestBingo);
-    console.log("bingoUsers", bingoUsers);
 
     let isAllBingo = false;
     bingoUsers.forEach((user) => {
@@ -238,9 +242,11 @@ export const Host = () => {
           }
           return x;
         });
-        console.log(prev, newArr);
         return newArr;
       });
+
+      clearInterval(autoID);
+      setAutoID(null);
     });
 
     socket.on("host:get_users", (_) => {
@@ -253,7 +259,7 @@ export const Host = () => {
       socket.off("host:user");
       socket.off("host:get_users");
     };
-  }, []);
+  }, [autoID]);
 
   useEffect(() => {
     if (startGame) {
@@ -312,7 +318,7 @@ export const Host = () => {
             <button
               style={{ opacity: !config.isCanCallNewNumber ? 0.5 : 1 }}
               disabled={!config.isCanCallNewNumber}
-              onClick={handleAuto}
+              onClick={() => handleAuto(autoID ? "disable" : "enable")}
               className="button-new-number"
             >
               {autoID ? "Disable" : "Enable"} Auto
@@ -322,6 +328,7 @@ export const Host = () => {
               disabled={!config.isCanCallNewNumber}
               onClick={handleNewNumber}
               className="button-new-number"
+              ref={ref}
             >
               Số mới
             </button>
