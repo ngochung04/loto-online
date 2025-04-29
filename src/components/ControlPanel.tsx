@@ -62,7 +62,7 @@ const ControlPanel = () => {
           gap: "8px",
           maxHeight: "calc(100% - 216px)",
           overflow: "auto",
-          minHeight: "calc(100vh - 216px)",
+          minHeight: "calc(100vh - 234px)",
         }}
       >
         {numberList.map((x) => (
