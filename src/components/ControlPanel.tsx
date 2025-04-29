@@ -70,12 +70,11 @@ const ControlPanel = () => {
       <div
         className="container"
         style={{
-          marginBottom: "16px",
           display: "inline block",
           gap: "8px",
           maxHeight: "calc(100% - 216px)",
           overflow: "auto",
-          minHeight: "calc(100vh - 234px)",
+          minHeight: "calc(100vh - 216px)",
         }}
       >
         {numberList.map((x) => (
