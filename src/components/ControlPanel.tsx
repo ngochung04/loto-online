@@ -1,9 +1,22 @@
-import { TICKETS } from "../constance";
+// import { useEffect } from "react";
+import { useEffect } from "react";
+import { SPEECH, TICKETS } from "../constance";
 import { socket } from "../services/socket";
 import { useUserInfo } from "../stores/userStore";
 
 const ControlPanel = () => {
   const { id, name, ticket, selection, numberList } = useUserInfo();
+
+  useEffect(() => {
+    const speak = (id: number) => {
+      const audio = new Audio(SPEECH[id as keyof typeof SPEECH]);
+      audio.play();
+    };
+
+    if (numberList.length) {
+      speak(Number(numberList[0]));
+    }
+  }, [numberList]);
 
   const getBingoList = () => {
     const ticketSelected = TICKETS[ticket as keyof typeof TICKETS];

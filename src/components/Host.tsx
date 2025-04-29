@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { User } from "./User";
 import { socket } from "../services/socket";
 import dayjs from "dayjs";
@@ -41,15 +41,18 @@ export const Host = () => {
   const [isPauseGame, setIsPauseGame] = useState<boolean>(false);
   const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null);
 
-  const handleNewNumber = () => {
+  const [autoID, setAutoID] = useState<any>(null);
+  const [autoTime, setAutoTime] = useState<number>(0);
+
+  const handleNewNumber = useCallback(() => {
     const available = numbers.filter((n) => !n.isChoose);
     if (!available.length) return;
 
     const selected =
       available[Math.floor(Math.random() * available.length)].number;
 
-    setNumbers(
-      numbers.map((n) =>
+    setNumbers((prev) =>
+      prev.map((n) =>
         n.number === selected
           ? { ...n, isChoose: true, key: `number-${selected}` }
           : n
@@ -59,8 +62,26 @@ export const Host = () => {
     socket.emit("host:new_number", selected);
 
     setNewNumber(selected);
-    setHistoryNumbers([...historyNumbers, selected].reverse());
+    setHistoryNumbers((prev) => [selected, ...prev]);
+  }, [numbers]);
+
+  const handleAuto = () => {
+    if (autoID) {
+      clearInterval(autoID.current);
+      setAutoID(null);
+      setAutoTime(0);
+    } else {
+      handleNewNumber();
+      const timerId = setInterval(() => {
+        handleNewNumber();
+      }, autoTime || 5000);
+      setAutoID(timerId);
+    }
   };
+
+  useEffect(() => {
+    return () => clearInterval(autoID);
+  }, [autoID]);
 
   const checkBingoFromClient = (id: string) => {
     const user = users.find((user) => user.id === id);
@@ -71,8 +92,6 @@ export const Host = () => {
     if (bingoNumbers.length === 0) {
       bingoNumbers = [-1, -1, -1, -1, -1];
     }
-
-    console.log(numbers);
 
     setUsers((users) =>
       users.map((user) =>
@@ -256,6 +275,36 @@ export const Host = () => {
       <div className="left-container">
         <div className="host-actions">
           <div className="buttons-container">
+            <input
+              type="number"
+              defaultValue={5}
+              min={3}
+              max={60}
+              step={0.5}
+              style={{
+                width: "60px",
+                height: "32px",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                padding: "0 8px",
+                outline: "none",
+                fontSize: "16px",
+              }}
+              onChange={(event) => {
+                setAutoTime(
+                  Number((event.target as HTMLInputElement).value) * 1000
+                );
+              }}
+            />
+            seconds
+            <button
+              style={{ opacity: !config.isCanCallNewNumber ? 0.5 : 1 }}
+              disabled={!config.isCanCallNewNumber}
+              onClick={handleAuto}
+              className="button-new-number"
+            >
+              {autoID ? "Disable" : "Enable"} Auto
+            </button>
             <button
               style={{ opacity: !config.isCanCallNewNumber ? 0.5 : 1 }}
               disabled={!config.isCanCallNewNumber}
