@@ -39,15 +39,17 @@ const textStyle: React.CSSProperties = {
   textAlign: "center",
 };
 
-const WaitingHost: React.FC = () => (
+const WaitingHost = ({ waitNextRound }: { waitNextRound: boolean }) => (
   <div style={containerStyle}>
     <div style={spinnerContainer}>
       <div style={rainbowGlowStyle} />
     </div>
     <div style={textStyle}>
-      Đang chờ chủ phòng tham gia...
+      {waitNextRound ? "Phòng đã bắt đầu" : "Đang chờ chủ phòng tham gia..."}
       <br />
-      Vui lòng đợi trong giây lát.
+      {waitNextRound
+        ? "Vui lòng chờ ván tiếp theo."
+        : "Vui lòng đợi trong giây lát."}
     </div>
     <style>
       {`

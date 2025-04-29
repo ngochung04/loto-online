@@ -46,7 +46,10 @@ function App() {
 
   if (name === "host") return <Host />;
   if (!name) return <LoginPage />;
-  if (!isHostReady) return <WaitingHost />;
+  if (!isHostReady || (!ticket && isStartGame && isHostReady))
+    return (
+      <WaitingHost waitNextRound={!ticket && isStartGame && isHostReady} />
+    );
   if (playerBingo.length) return <Bingo />;
   if (!isStartGame) return <TicketListPage />;
 
@@ -67,6 +70,7 @@ function App() {
           padding: "16px 32px",
           gap: "16px",
           position: "relative",
+          height: "calc(100vh - 32px)",
         }}
       >
         <img
@@ -76,7 +80,7 @@ function App() {
             zIndex: 1,
             top: "0",
             left: "50%",
-            width: "calc(100% - 32px)",
+            width: "100%",
             height: "100%",
             transform: "translateX(-50%)",
           }}

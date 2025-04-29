@@ -30,6 +30,7 @@ const History = () => {
         display: "flex",
         flexDirection: "column",
         gap: "8px",
+        height: "calc(100vh - 64px)",
       }}
     >
       {/* {!!message.length &&

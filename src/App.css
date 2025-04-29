@@ -92,7 +92,7 @@
   font-weight: bold;
   color: #333;
   -webkit-user-select: none;
-  -ms-user-select: none; 
+  -ms-user-select: none;
   user-select: none;
 }
 
@@ -130,6 +130,22 @@
   background: rgba(37, 37, 37, 0.8);
   border-radius: 8px;
   padding: 16px;
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
 }
 
 .history-number {
@@ -144,14 +160,15 @@
   background: #f6fcd8;
   border-radius: 8px;
   padding: 0 8px;
+  margin: 4px;
 }
 
 .history-number:first-of-type {
   color: rgb(0, 255, 13);
   background: #293825;
-  font-size: 40px;
+  /* font-size: 40px;
   min-width: 45px;
-  height: 45px;
+  height: 45px; */
 }
 
 .btn-bingo {
