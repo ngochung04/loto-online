@@ -12,9 +12,25 @@ import { TICKETS } from "./constance";
 import WaitingHost from "./components/WaitingHost";
 import Bingo from "./components/Bingo";
 
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
+
 function App() {
   const { ticket, name, isStartGame, playerBingo, isHostReady, update } =
     useUserInfo();
+
+  useEffect(() => {
+    const fetchServerStatus = async () => {
+      try {
+        const response = await fetch(`${SOCKET_URL}/server-status`); // Use environment variable for base URL
+        const data = await response.json();
+        console.log("Server Status:", data.status); // Log the server status
+      } catch (error) {
+        console.error("Error fetching server status:", error);
+      }
+    };
+
+    fetchServerStatus();
+  }, []);
 
   useEffect(() => {
     socket.on("client:listener", (_) => {

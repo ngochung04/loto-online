@@ -22,6 +22,10 @@ let numberList = [];
 let playerBingo = [];
 let bingoTemp = {};
 
+app.get("/server-status", (req, res) => {
+  res.json({ status: "ok" });
+});
+
 const getTicketList = () => {
   let ticket_list = []; // Assuming ticket_list is defined somewhere
   userList.forEach((_) => {
