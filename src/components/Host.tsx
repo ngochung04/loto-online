@@ -44,7 +44,7 @@ export const Host = () => {
   const [autoID, setAutoID] = useState<any>(null);
   const [autoTime, setAutoTime] = useState<number>(5000);
 
-  const ref = useRef(null);
+  const ref = useRef<HTMLButtonElement>(null);
 
   const handleNewNumber = useCallback(() => {
     const available = numbers.filter((n) => !n.isChoose);
