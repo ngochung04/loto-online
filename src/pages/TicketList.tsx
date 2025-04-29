@@ -32,6 +32,13 @@ const TicketListPage = () => {
         <h2 style={{ color: "#2563eb", marginBottom: 24, marginTop: 0 }}>
           Choose your ticket
         </h2>
+        {ticket && (
+          <div style={{ color: "#2563eb" }}>
+            <span style={{ fontWeight: "bold" }}>Selected ticket:</span> {ticket},{" "}
+            <span style={{ fontWeight: "bold" }}>Waiting for host to start this game</span>
+          </div>
+        )}
+
         <div
           style={{
             display: "grid",
