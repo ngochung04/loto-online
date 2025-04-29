@@ -1,11 +1,12 @@
 // import { useEffect } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { SPEECH, TICKETS } from "../constance";
 import { socket } from "../services/socket";
 import { useUserInfo } from "../stores/userStore";
 
 const ControlPanel = () => {
   const { id, name, ticket, selection, numberList } = useUserInfo();
+  const [bingoDisabled, setBingoDisabled] = useState(false);
 
   useEffect(() => {
     const speak = (id: number) => {
@@ -33,8 +34,13 @@ const ControlPanel = () => {
   };
 
   const handleBingo = () => {
+    if (bingoDisabled) return;
+
     const bingoArr = getBingoList();
     if (!bingoArr) return;
+
+    setBingoDisabled(true);
+    setTimeout(() => setBingoDisabled(false), 3000);
     socket.emit("host:bingo", {
       id,
       name,
@@ -60,9 +66,15 @@ const ControlPanel = () => {
         }}
       >
         <button
-          style={{ opacity: getBingoList() ? "1" : ".5", width: "100%" }}
-          className={`btn-bingo ${getBingoList() ? "btn-bingo-animation" : ""}`}
+          style={{
+            opacity: getBingoList() && !bingoDisabled ? "1" : ".5",
+            width: "100%",
+          }}
+          className={`btn-bingo ${
+            getBingoList() && !bingoDisabled ? "btn-bingo-animation" : ""
+          }`}
           onClick={handleBingo}
+          disabled={!getBingoList() || bingoDisabled}
         >
           Kinh
         </button>

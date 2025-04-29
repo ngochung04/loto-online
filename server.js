@@ -87,6 +87,18 @@ io.on("connection", (socket) => {
     const { fullSelection, ...rest } = _;
     bingoTemp[_.tickerNumber] = fullSelection;
     io.emit("bingo", { ...rest, id: socket.id });
+    io.emit("client:message", {
+      ..._,
+      message: "Request Bingo!",
+    });
+  });
+
+  socket.on("host:deny_bingo", (_) => {
+    io.emit("client:message", {
+      name: "SYSTEM",
+      tickerNumber: 0,
+      message: "HOST refused the results from " + _.name,
+    });
   });
 
   socket.on("disconnect", () => {

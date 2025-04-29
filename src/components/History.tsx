@@ -1,27 +1,33 @@
-// import { useEffect, useState } from "react";
-// import { TICKET_COLORS } from "../constance";
-// import { socket } from "../services/socket";
-// import { useUserInfo } from "../stores/userStore";
+import { useEffect, useState } from "react";
+import { TICKET_COLORS } from "../constance";
+import { socket } from "../services/socket";
 
-// interface IMessage {
-//   name: string;
-//   ticketId: number;
-//   message: string;
-// }
+interface IMessage {
+  name: string;
+  ticketId: number;
+  message: string;
+}
 
 const History = () => {
-  // const [message, setMessage] = useState<IMessage[]>([]);
+  const [message, setMessage] = useState<IMessage[]>([]);
   // const { setId } = useUserInfo();
 
-  // useEffect(() => {
-  //   socket.on("client:setup", (_) => {
-  //     setId(_.socketId);
-  //   });
+  useEffect(() => {
+    socket.on("client:message", (_) => {
+      setMessage((prev) => [
+        ...prev,
+        {
+          name: _.name,
+          ticketId: _.ticketNumber,
+          message: _.message,
+        },
+      ]);
+    });
 
-  //   return () => {
-  //     socket.off("request_login");
-  //   };
-  // }, []);
+    return () => {
+      socket.off("client:message");
+    };
+  }, []);
   return (
     <div
       className="container hidden_mobile"
@@ -33,7 +39,7 @@ const History = () => {
         height: "calc(100vh - 64px)",
       }}
     >
-      {/* {!!message.length &&
+      {!!message.length &&
         message?.map((_, i) => (
           <div
             key={i}
@@ -55,7 +61,7 @@ const History = () => {
             </span>
             <span>{_.message}</span>
           </div>
-        ))} */}
+        ))}
     </div>
   );
 };

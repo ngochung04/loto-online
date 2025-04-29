@@ -161,9 +161,14 @@ export const Host = () => {
 
   const rejectAllBingoFromClient = () => {
     setUsers(
-      users.map((user) =>
-        user.isRequestBingo ? { ...user, isRequestBingo: false } : user
-      )
+      users.map((user) => {
+        if (user.isRequestBingo)
+          socket.emit("host:deny_bingo", {
+            name: user.name,
+            ticketId: user.tickerNumber,
+          });
+        return user.isRequestBingo ? { ...user, isRequestBingo: false } : user;
+      })
     );
   };
 
@@ -183,6 +188,12 @@ export const Host = () => {
         user.id === id ? { ...user, isRequestBingo: false } : user
       )
     );
+
+    const userName = users.find((x) => x.id === id)?.name;
+    if (userName)
+      socket.emit("host:deny_bingo", {
+        name: userName,
+      });
   };
 
   const isChoose = (number: number) => {
