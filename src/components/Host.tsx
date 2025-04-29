@@ -65,8 +65,8 @@ export const Host = () => {
     setHistoryNumbers((prev) => [selected, ...prev]);
   }, [numbers]);
 
-  const handleAuto = () => {
-    if (autoID) {
+  const handleAuto = (type?: "disable" | "enable" | any) => {
+    if (autoID || type === "disable") {
       clearInterval(autoID.current);
       setAutoID(null);
       setAutoTime(0);
@@ -105,6 +105,7 @@ export const Host = () => {
   const handleStartGame = () => {
     // setStartGame(true);
     socket.emit("host:new_game");
+    handleAuto("disable");
     setHistoryNumbers([]);
     setNewNumber(0);
     setNumbers(
