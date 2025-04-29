@@ -106,6 +106,68 @@
 .ticket_row__number.checked {
   text-decoration: underline;
   text-decoration-color: red;
+  position: relative;
+}
+
+@media (max-width: 600px) {
+  .hidden_mobile {
+    display: none !important;
+  }
+  .tickets-list {
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 0;
+  }
+  .ticket_container {
+    width: fit-content;
+    margin: 0 auto;
+    gap: 4px;
+    padding: 4px;
+    border: 0.5px solid black;
+  }
+
+  .ticket_container .ticket_row__number {
+    width: 33px;
+    height: 55px;
+    font-size: 18px;
+    border: 0.5px solid black;
+  }
+
+  .ticket_row__number.checked {
+    text-decoration: none;
+  }
+  .ticket_row__number.checked::after {
+    content: "0";
+    position: absolute;
+    top: -45%;
+    color: red;
+    font-size: 64px;
+    font-weight: 200;
+  }
+  .btn-bingo {
+    width: 100px !important;
+    height: 50px !important;
+    font-size: 24px !important;
+  }
+  .container {
+    width: fit-content;
+  }
+
+  .history-number-container {
+    display: inline block;
+    gap: 8px;
+    max-height: calc(100% - 727px);
+    overflow: auto;
+    min-height: calc(100vh - 727px) !important;
+  }
+}
+
+.history-number-container {
+  display: inline block;
+  gap: 8px;
+  max-height: calc(100% - 216px);
+  overflow: auto;
+  min-height: calc(100vh - 216px);
 }
 
 .container {
@@ -165,7 +227,8 @@
   font-size: 48px;
   font-weight: bold;
 }
-.btn-bingo-animation:hover {
+.btn-bingo-animation {
+  color: black;
   background-image: linear-gradient(
     to right,
     #e7484f,

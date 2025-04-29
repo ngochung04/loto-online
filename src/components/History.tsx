@@ -24,7 +24,7 @@ const History = () => {
   // }, []);
   return (
     <div
-      className="container"
+      className="container hidden_mobile"
       style={{
         width: "100%",
         display: "flex",

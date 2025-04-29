@@ -67,16 +67,7 @@ const ControlPanel = () => {
           Kinh
         </button>
       </div>
-      <div
-        className="container"
-        style={{
-          display: "inline block",
-          gap: "8px",
-          maxHeight: "calc(100% - 216px)",
-          overflow: "auto",
-          minHeight: "calc(100vh - 216px)",
-        }}
-      >
+      <div className="container history-number-container">
         {numberList.map((x) => (
           <div className="history-number">{x}</div>
         ))}
