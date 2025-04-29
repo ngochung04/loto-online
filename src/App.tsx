@@ -46,11 +46,11 @@ function App() {
 
   if (name === "host") return <Host />;
   if (!name) return <LoginPage />;
+  if (playerBingo.length) return <Bingo />;
   if (!isHostReady || (!ticket && isStartGame && isHostReady))
     return (
       <WaitingHost waitNextRound={!ticket && isStartGame && isHostReady} />
     );
-  if (playerBingo.length) return <Bingo />;
   if (!isStartGame) return <TicketListPage />;
 
   return (
